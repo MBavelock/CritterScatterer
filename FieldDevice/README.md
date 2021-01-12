@@ -1,6 +1,5 @@
 # Field Device TODO List:
 
- - [ ] WPS Script
  - [ ] Detection Script
  - [ ] Event Logging Script
  - [ ] Audio Deterrent Script
