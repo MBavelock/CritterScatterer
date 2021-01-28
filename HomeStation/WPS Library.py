@@ -4,6 +4,10 @@ import urllib
 import re
 import subprocess
 import time
+# NEED TO STANDARDIZE GPIO FOR PROJECT TODO
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BOARD)
+GPIO.setwarnings(False)
 
 
 def CheckWiFiStatus(): # NOT TESTED
@@ -59,12 +63,18 @@ def ConnectWifi_WPS(IPStatus): # NOT TESTED
 
 # Example usage
 def main(): # NOT TESTED
+  #channel = ##
+  GPIO.setup(channel, GPIO.OUT) # NEED LED PIN (channel)
+  GPIO.output(channel, 0)
   ButtonPressed = True 
   while True:
     IPStatus = CheckWiFiStatus
     if not(IPStatus):
       if ButtonPressed:
         ConnectWiFi_WPS()
+        GPIO.output(channel, 0) # Turn off LED to indicate connection status
+    else:
+      GPIO.output(channel, 1) # Turn on LED to indicate connection status
 
 if __name__ == __main__:
     main()
