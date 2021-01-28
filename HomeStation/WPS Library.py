@@ -19,6 +19,7 @@ def CheckWiFiStatus(): # NOT TESTED
   except:
     return 0 # Connection failed
   return 1 # Connection successfull
+
   # 2nd - Source (https://www.raspberrypi.org/forums/viewtopic.php?t=77277)
   ret = subprocess.check_output(["ifconfig", "wlan0"]).decode("utf-8")
   reg = re.search("inet (\d+\.\d+\.\d+\.\d+)", ret)
@@ -28,17 +29,40 @@ def CheckWiFiStatus(): # NOT TESTED
       return True
   
   
-def ConnectWifi_WPS(): # NOT TESTED
+def ConnectWifi_WPS(IPStatus): # NOT TESTED
   '''
   Funtion should be called when the button designated as our WPS is pressed
   Function will connect to the WIFI network which has has it's routers WPS pressed
+  (Source = https://www.raspberrypi.org/forums/viewtopic.php?t=77277)
   '''
+  # run until we are sure that WiFi is connected and running
+  while not(IPStatus):
+  # no IP address, so start looking for WPS-PBC network
+  # scan networks on interface wlan0, to see some nice networks
+  subprocess.check_output(["wpa_cli", "-i", "wlan0", "scan"])
+  time.sleep(1);
+  # get and decode results
+  wpa = subprocess.check_output(["wpa_cli", "-i", "wlan0", "scan_results"]).decode("UTF-8")
+  # parse response to get MAC address of router that has WPS-PBC state
+  active_spot_reg = re.search("(([\da-f]{2}:){5}[\da-f]{2})(.*?)\[WPS-PBC\]", wpa)
+  # check if we found any
+  if not(active_spot_reg is None):
+    if active_spot_reg.group(1):
+      #connect via wps_pbc
+      subprocess.check_output(["wpa_cli", "-i", "wlan0", "wps_pbc", active_spot_reg.group(1)])
+      # some debug
+      print(active_spot_reg.group(1))
+      print(wpa)
+  # sleep to scan again
+  time.sleep(30)
+  IPStatus = CheckWiFiStatus()
 
 # Example usage
-def main():
+def main(): # NOT TESTED
   ButtonPressed = True 
   while True:
-    if not(CheckWiFiStatus):
+    IPStatus = CheckWiFiStatus
+    if not(IPStatus):
       if ButtonPressed:
         ConnectWiFi_WPS()
 
