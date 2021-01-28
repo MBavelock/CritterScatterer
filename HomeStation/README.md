@@ -5,4 +5,5 @@
  - [ ] Server script
  - [ ] GUI script
  - [ ] Check settings and apply them script
+ - [X] WPS Script
  - [ ] ... Add items if needed
