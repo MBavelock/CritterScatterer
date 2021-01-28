@@ -3,7 +3,7 @@
 import urllib
 
 
-def CheckWiFiStatus():
+def CheckWiFiStatus(): # NOT TESTED
   ''' 
   Function will check if currenty connected to an internet network. If connected return 1 else return 0  
             two ways to do this
@@ -11,14 +11,25 @@ def CheckWiFiStatus():
   2nd - run subprocess to check connection status and parse the output
   '''
   # 1st
-    try:
-        urllib.request.urlopen("http://google.com") # URL is closed as soon as the connection is reached
-    except:
-        ret 0 # Connection failed
-    ret 1 # Connection successfull
+  try:
+    urllib.request.urlopen("http://google.com") # URL is closed as soon as the connection is reached
+  except:
+    ret 0 # Connection failed
+  ret 1 # Connection successfull
   # 2nd
   # https://stackoverflow.com/questions/50388069/check-status-if-raspberry-pi-is-connected-to-any-wifi-network-not-internet-nece
   
   
-def ConnecttoWifi_WPS():
+def ConnecttoWifi_WPS(): # NOT TESTED
+  '''
+  Funtion should be called when the button designated as our WPS is pressed
+  Function will connect to the WIFI network which has has it's routers WPS pressed
+  '''
 
+# Example usage
+def main():
+  if not(CheckWiFiStatus):
+    
+
+if __name__ == __main__:
+    main()
