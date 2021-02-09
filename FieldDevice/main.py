@@ -6,7 +6,7 @@
 
 # Start Main
 def main():
-  # Init Stuff
+  # Init Stuff - Loop on failed?
     # Check connection with home (radio)
     # Check (maybe) power
     # Check camera status
@@ -22,7 +22,9 @@ def main():
           # inference picture
         # determine possitive classification (either parallel script take main space)
         # if possitive classification
-          # 
+          # Add to record - Classification
+          # Activate deterrent method
+          # Record deterrent used and Time/Day
         # else
           # Leave current PIR hit
           # Clear Record Entry - Note hit but not classify?
