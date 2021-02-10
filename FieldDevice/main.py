@@ -23,11 +23,24 @@ def main():
         # determine possitive classification (either parallel script take main space)
         # if possitive classification
           # Add to record - Classification
+          # Send home station an alert about classification
           # Activate deterrent method
           # Record deterrent used and Time/Day
         # else
           # Leave current PIR hit
           # Clear Record Entry - Note hit but not classify?
+          # delay?
+        # Sample again
+          # to ensure critter has left
+          # deter again 
+          # add to record deterrent time/day
+          # loop here until critter left
+        # Finalize record - Save to text file - All new entries get !
+    # After some amount of time T - connect to home station
+    # Time check - might have to skew log entries on failed checks
+    # Settings check - (TDB)
+    # log check - (TBD)
+    # 
     
     
     
