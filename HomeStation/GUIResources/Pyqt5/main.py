@@ -22,6 +22,10 @@ class OptionsMenu(QDialog):
         super(OptionsMenu, self).__init__()
         loadUi("UIs/options.ui", self)
         self.goBack.clicked.connect(self.GoBack)            #When goBack button is clicked, call GoBack
+        self.optEvents.clicked.connect(self.OptionsToEvents)    #When Events button is clicked, switch to Events dialog
+
+    def OptionsToEvents(self):
+        widget.setCurrentIndex(2)   #Events menu is index 2 in stack
 
     def GoBack(self):
         widget.setCurrentIndex(0)   #Mainwindow is index 0 in stack
@@ -32,6 +36,10 @@ class EventsMenu(QDialog):
         super(EventsMenu, self).__init__()
         loadUi("UIs/events.ui", self)
         self.goBack.clicked.connect(self.GoBack)            #When goBack button is clicked, call GoBack
+        self.evntOptions.clicked.connect(self.EventsToOptions)    #When Options button is clicked, switch to Options dialog
+
+    def EventsToOptions(self):
+        widget.setCurrentIndex(1)   #Options menu is index 2 in stack
 
     def GoBack(self):
         widget.setCurrentIndex(0)   #Mainwindow is index 0 in stack
