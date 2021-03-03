@@ -13,37 +13,98 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QLabel" name="label">
+  <widget class="QWidget" name="widget" native="true">
    <property name="geometry">
     <rect>
-     <x>320</x>
-     <y>150</y>
-     <width>121</width>
-     <height>20</height>
+     <x>0</x>
+     <y>0</y>
+     <width>91</width>
+     <height>481</height>
     </rect>
    </property>
-   <property name="text">
-    <string>This is the events menu</string>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
-   <property name="scaledContents">
-    <bool>false</bool>
-   </property>
+   <widget class="QPushButton" name="evntOptions">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>80</y>
+      <width>91</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Options</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="evntOn">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>160</y>
+      <width>91</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>On/Off</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="goBack">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>91</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Go Back</string>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+   </widget>
   </widget>
-  <widget class="QPushButton" name="goBack">
+  <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>280</y>
-     <width>75</width>
-     <height>23</height>
+     <x>100</x>
+     <y>10</y>
+     <width>311</width>
+     <height>459</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Go Back</string>
+   <property name="font">
+    <font>
+     <family>Montserrat Light</family>
+     <pointsize>14</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+     <underline>false</underline>
+     <strikeout>false</strikeout>
+     <stylestrategy>PreferDefault</stylestrategy>
+     <kerning>true</kerning>
+    </font>
    </property>
-   <property name="checkable">
-    <bool>false</bool>
+   <property name="currentIndex">
+    <number>0</number>
    </property>
+   <widget class="QWidget" name="Today">
+    <attribute name="title">
+     <string>Today</string>
+    </attribute>
+   </widget>
+   <widget class="QWidget" name="Older">
+    <attribute name="title">
+     <string>Older</string>
+    </attribute>
+   </widget>
   </widget>
  </widget>
  <resources/>
