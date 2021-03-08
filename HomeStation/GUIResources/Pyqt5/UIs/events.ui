@@ -42,9 +42,9 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="SideBar">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+      <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -55,9 +55,9 @@
        <height>0</height>
       </size>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0">
       <property name="spacing">
-       <number>220</number>
+       <number>0</number>
       </property>
       <property name="sizeConstraint">
        <enum>QLayout::SetDefaultConstraint</enum>
@@ -75,9 +75,9 @@
        <number>0</number>
       </property>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="Buttons">
         <property name="spacing">
-         <number>20</number>
+         <number>0</number>
         </property>
         <property name="sizeConstraint">
          <enum>QLayout::SetFixedSize</enum>
@@ -86,7 +86,7 @@
          <number>0</number>
         </property>
         <property name="bottomMargin">
-         <number>25</number>
+         <number>0</number>
         </property>
         <item>
          <widget class="QPushButton" name="goBack">
@@ -175,6 +175,19 @@
        </layout>
       </item>
       <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
        <layout class="QHBoxLayout" name="RefreshLayout">
         <property name="spacing">
          <number>0</number>
@@ -216,7 +229,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="QTabWidget" name="LogsList">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -236,7 +249,7 @@
       </font>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="Today">
       <attribute name="title">
