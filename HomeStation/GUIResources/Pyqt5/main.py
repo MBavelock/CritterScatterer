@@ -9,14 +9,17 @@
 #-------------------------------------------------------------------------#
 
 import sys
+import pathlib
 import urllib.request
+from os import path
 from PyQt5.uic import loadUi
 from PyQt5 import QtWebEngineWidgets, QtWidgets, QtCore
-from PyQt5.QtCore import QSize
-from PyQt5.QtWidgets import QMainWindow, QDialog, QApplication, QPushButton, QProgressBar
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QColor, QIcon
 from waitingspinnerwidget import QtWaitingSpinner
 from functools import partial
+from downloader import Downloader
 
 #Main window
 class MainWindow(QMainWindow):
@@ -67,7 +70,10 @@ class Events(QDialog):
 
         self.SpinnerInit()
         self.RefreshLayout.addWidget(self.spinner)  #Add spinner to column 1 of the RefreshGrid
-        self.refresh.clicked.connect(self.Download)    #If refresh button is clicked, start downloader
+        self.refresh.clicked.connect(self.run_Downloader)    #If refresh button is clicked, start downloader
+
+    def run_Downloader(self):   #Call to download method
+        Downloader().Download(self.spinner)
 
     #Method to initialize the waiting spinner
     def SpinnerInit(self):
@@ -90,20 +96,35 @@ class Events(QDialog):
         else:
             self.spinner.start()
 
-    #Calculate download progress and show spinner during that time
-    def DownProgress(self, blocknum, blocksize, totalsize): 
-        data = blocknum * blocksize #Calculate data size
+#Event Alt Window (Used to download event file when not found)
+class EventAlt(QMainWindow):
+    def __init__(self):
+        super(EventAlt, self).__init__()
+        loadUi("UIs/eventalt.ui", self)     #Load the eventalt UI created with Qt Designer
 
-        if totalsize > 0: 
-            QApplication.processEvents()    #Process events from the current call
+        #When go back is clicked, switch to the main menu
+        self.goBack.clicked.connect(partial(WindowSwitch.Switch, name = 'Main'))
 
-    def Download(self): 
-        url = 'https://speed.hetzner.de/100MB.bin' #URL to download from
-        filename = 'test.txt'
-        path = 'C:/ECE 458/GUI/' + filename #Path to download to
-        self.ToggleSpinner()
-        urllib.request.urlretrieve(url, path, self.DownProgress)  #Download using urllib, call DownProgress
-        self.ToggleSpinner()
+        self.SpinnerInit()
+        self.verticalLayout.insertWidget(3, self.spinner2, 0, Qt.AlignHCenter)  #Add spinner to row 3 of the verticallayout
+        self.download.clicked.connect(self.run_Downloader)  #If download button is clicked, start downloader
+
+    def run_Downloader(self):   #Call to download method
+        Downloader().Download(self.spinner2)
+        WindowSwitch().Switch(name = 'Events')
+
+    #Method to initialize the waiting spinner
+    def SpinnerInit(self):
+        self.spinner2 = QtWaitingSpinner(self, centerOnParent=False)   #Create new spinner
+        self.spinner2.setRoundness(60)
+        self.spinner2.setMinimumTrailOpacity(15.0)
+        self.spinner2.setTrailFadePercentage(60)
+        self.spinner2.setNumberOfLines(15)
+        self.spinner2.setLineLength(6)
+        self.spinner2.setLineWidth(5)
+        self.spinner2.setInnerRadius(7)
+        self.spinner2.setRevolutionsPerSecond(3)
+        self.spinner2.setColor(QColor(7, 47, 157))
 
 #Class method to switch windows using the stacked widget
 class WindowSwitch():
@@ -113,7 +134,10 @@ class WindowSwitch():
         elif name == 'Options':
             stack.setCurrentIndex(1)    #Options window index is 1
         elif name == 'Events':
-            stack.setCurrentIndex(2)    #Events window index is 2
+            if path.exists("C:/ECE 458/GUI/test.txt"):
+                stack.setCurrentIndex(2)    #Events window index is 2
+            else:
+                stack.setCurrentIndex(3)    #Events alt window index is 3
 
 #Main
 if __name__ == "__main__":
@@ -125,6 +149,8 @@ if __name__ == "__main__":
     stack.addWidget(options)
     events = Events()
     stack.addWidget(events)
+    eventalt = EventAlt()
+    stack.addWidget(eventalt)
     stack.setMinimumSize(781, 481)
     stack.show()
 
