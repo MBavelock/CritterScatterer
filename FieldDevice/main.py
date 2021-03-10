@@ -111,7 +111,7 @@ def main():
     # Check camera status
     # load model and perform inital inference
     # Check (maybe) deterrents
-   if Debug:
+    if Debug:
         count = 0
         if TimeLapse:
             maxcount = 100000
@@ -190,26 +190,29 @@ def main():
                     
                     # Recheck area    
                     Reassess = True
+                    EventEnd = 0
                 else:
                     Reassess = False
+                    EventEnd = time.time()
                 
                 # Add Variables to LOG
                 LOG = open("FieldDevice_EventLog.txt", "a")
-                LOG.write("New Event:\n"
-                LOG.write(LOG_PIRHit)
-                LOG.write("\n")
-                LOG.write(LOG_ClassifiedEvent)
-                LOG.write("\n")
-                LOG.write(LOG_DeterrentX)
-                LOG.write("\n")
-                LOG.write(LOG_DeterrentY)
-                LOG.write("\n")
-                LOG.write(LOG_DeterrentZ)
-                LOG.write("\n")
+                if not(EventEnd):
+                    LOG.write("\nNew Event:"
+                LOG.write("\n" LOG_PIRHit)
+                LOG.write("\n" LOG_ClassifiedEvent)
+                LOG.write("\n" LOG_DeterrentX)
+                LOG.write("\n" LOG_DeterrentY)
+                LOG.write("\n" LOG_DeterrentZ)
+                if EventEnd:
+                    LOG.write("\n" EventEnd)
                 LOG.close() 
                 
-            if RadioTime-time.time() >= 360: # Check if time since Start of script 
+            if RadioTime-time.time() >= 360: # Check if time since last radio communication >= 5 minutes
                 # Radio communication here
+                # Time Check
+                # Send new events
+                # Receive Settings 
                 RadioTime = time.time()
             # Spin
                  
