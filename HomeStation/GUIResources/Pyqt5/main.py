@@ -12,65 +12,93 @@ import sys
 import pathlib
 import urllib.request
 from os import path
+from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.uic import loadUi
-from PyQt5 import QtWebEngineWidgets, QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QColor, QIcon
+from PyQt5.QtGui import *
 from waitingspinnerwidget import QtWaitingSpinner
 from functools import partial
 from downloader import Downloader
+from buttons import MainButton, SideButton
 
 #Main window
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         loadUi("UIs/main.ui", self) #Load the main UI created with Qt Designer
-        self.ButtonIcons()
+
+        #Create options button
+        self.Options = MainButton(iconpath = "Images/Options Button.svg", xSize = 170, ySize = 170)
+        self.horizontalLayout.addWidget(self.Options)
+
+        #Create events button
+        self.Events = MainButton(iconpath = "Images/Events Button.svg", xSize = 170, ySize = 170)
+        self.horizontalLayout.addWidget(self.Events)
+
+        #Create on and off button
+        self.OnOff = MainButton(iconpath = "Images/On Button.svg", xSize = 170, ySize = 170)
+        self.horizontalLayout.addWidget(self.OnOff)
 
         #When options is clicked, switch to the options window
         self.Options.clicked.connect(partial(WindowSwitch.Switch, name = 'Options'))
         #When events is clicked, switch to the events window
         self.Events.clicked.connect(partial(WindowSwitch.Switch, name = 'Events'))
 
-    def ButtonIcons(self): 
-        #Set icon and size for options button
-        self.Options.setIcon(QIcon("Images/Options Button.svg"))
-        self.Options.setIconSize(QSize(170,170))
 
-        #Set icon and size for events button
-        self.Events.setIcon(QIcon("Images/Events Button.svg"))
-        self.Events.setIconSize(QSize(170,170))
-
-        #Set icon and size for on/off button
-        self.OnOff.setIcon(QIcon("Images/Off Button.svg"))
-        self.OnOff.setIconSize(QSize(170,170))
 
 #Options window
 class Options(QDialog):
     def __init__(self, parent=None):
         super(Options, self).__init__(parent)
         loadUi("UIs/options.ui", self)  #Load the options UI created with Qt Designer
+        self.ButtonInit()
 
         #When go back is clicked, switch to the main menu
         self.goBack.clicked.connect(partial(WindowSwitch.Switch, name = 'Main'))
         #When events is clicked, switch to the events menu
         self.optEvents.clicked.connect(partial(WindowSwitch.Switch, name = 'Events'))
 
+    def ButtonInit(self):
+        #Create GoBack Button
+        self.goBack = SideButton(iconpath = "Images/Back Button.svg", hovericon = "Images/Back Button Hover.svg", xSize = 75, ySize = 75)
+        self.SideBar.insertWidget(0, self.goBack)
+
+        #Create Events Button
+        self.optEvents = SideButton(iconpath = "Images/Side Events.svg", hovericon = "Images/Side Events Hover.svg", xSize = 75, ySize = 75)
+        self.SideBar.insertWidget(1, self.optEvents)
+
 #Event window
 class Events(QDialog):
     def __init__(self, parent=None):
         super(Events, self).__init__(parent)
         loadUi("UIs/events.ui", self)   #Load the events UI created with Qt Designer
+        self.ButtonInit()
 
         #When go back is clicked, switch to the main menu
         self.goBack.clicked.connect(partial(WindowSwitch.Switch, name = 'Main'))
         #When options is clicked, switch to the options window
         self.evntOptions.clicked.connect(partial(WindowSwitch.Switch, name = 'Options'))
 
+        
+
         self.SpinnerInit()
         self.RefreshLayout.addWidget(self.spinner)  #Add spinner to column 1 of the RefreshGrid
         self.refresh.clicked.connect(self.run_Downloader)    #If refresh button is clicked, start downloader
+
+    def ButtonInit(self):
+        #Create GoBack Button
+        self.goBack = SideButton(iconpath = "Images/Back Button.svg", hovericon = "Images/Back Button Hover.svg", xSize = 75, ySize = 75)
+        self.Buttons.insertWidget(0, self.goBack)
+
+        #Create Options Button
+        self.evntOptions = SideButton(iconpath = "Images/Side Options.svg", hovericon = "Images/Side Options Hover.svg", xSize = 75, ySize = 75)
+        self.Buttons.insertWidget(1, self.evntOptions)
+
+        #Create Refresh Button  
+        self.refresh = SideButton(iconpath = "Images/Refresh Button.svg", hovericon = "Images/Refresh Button Hover.svg", xSize = 30, ySize = 30)
+        self.RefreshLayout.addWidget(self.refresh)
+
 
     def run_Downloader(self):   #Call to download method
         Downloader().Download(self.spinner)
@@ -102,12 +130,20 @@ class EventAlt(QMainWindow):
         super(EventAlt, self).__init__()
         loadUi("UIs/eventalt.ui", self)     #Load the eventalt UI created with Qt Designer
 
-        #When go back is clicked, switch to the main menu
-        self.goBack.clicked.connect(partial(WindowSwitch.Switch, name = 'Main'))
+        #Create download button
+        self.Download = MainButton(iconpath = "Images/Download Button.svg", xSize = 170, ySize = 170)
+        self.verticalLayout.insertWidget(2, self.Download, 0, Qt.AlignHCenter)
+
+        #Create goback sidebar button
+        self.goBack = SideButton(iconpath = "Images/Back Button.svg", hovericon = "Images/Back Button Hover.svg", xSize = 75, ySize = 75)
+        self.SideBar.insertWidget(0, self.goBack)
 
         self.SpinnerInit()
         self.verticalLayout.insertWidget(3, self.spinner2, 0, Qt.AlignHCenter)  #Add spinner to row 3 of the verticallayout
-        self.download.clicked.connect(self.run_Downloader)  #If download button is clicked, start downloader
+        self.Download.clicked.connect(self.run_Downloader)  #If download button is clicked, start downloader
+
+        #When go back is clicked, switch to the main menu
+        self.goBack.clicked.connect(partial(WindowSwitch.Switch, name = 'Main'))
 
     def run_Downloader(self):   #Call to download method
         Downloader().Download(self.spinner2)
