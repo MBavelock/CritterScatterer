@@ -52,27 +52,8 @@
      <number>0</number>
     </property>
     <item>
-     <layout class="QGridLayout" name="SideBar" columnstretch="0">
-      <item row="0" column="0">
-       <widget class="QPushButton" name="goBack">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>75</width>
-          <height>75</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Go Back</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
+     <layout class="QVBoxLayout" name="SideBar">
+      <item>
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -88,7 +69,7 @@
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0">
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0">
       <property name="spacing">
        <number>35</number>
       </property>
@@ -133,33 +114,6 @@
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item alignment="Qt::AlignHCenter">
-       <widget class="QPushButton" name="download">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>170</width>
-          <height>170</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <family>Montserrat SemiBold</family>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Download</string>
         </property>
        </widget>
       </item>
