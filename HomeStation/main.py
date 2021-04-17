@@ -13,8 +13,8 @@ from WPS import CheckWiFiStatus
 from WPS import ConnectWifi_WPS
 
 # Radio Libraries
-from RadioRx import Radio_RX
-from RadioTx import Radio_TX, RadioCalibrate
+#from RadioRx import Radio_RX
+#from RadioTx import Radio_TX, RadioCalibrate
 
 # Server Libraries
 
@@ -31,37 +31,39 @@ BlinkDelay = 0.5
 
 # LED Pins
     # Wifi LED - Indicates connection status to Wifi
-WIFI_LED_Pin_Number = ENTER LED PIN # Enter pin
+WIFI_LED_Pin_Number = 35 # Enter pin
 GPIO.setup(WIFI_LED_Pin_Number, GPIO.OUT) # Set pin to output 
 WIFI_LED_STATE = 0
 GPIO.output(WIFI_LED_Pin_Number, WIFI_LED_STATE) # Set pin Low
 
 
     # Radio LED - Indicates connection status to Field Device
-Radio_LED_Pin_Number = ENTER LED PIN # Enter pin
+Radio_LED_Pin_Number = 33 # Enter pin
 GPIO.setup(Radio_LED_Pin_Number, GPIO.OUT) # Set pin to output
 Radio_LED_STATE = 0
 GPIO.output(Radio_LED_Pin_Number, Radio_LED_STATE) # Set pin Low
 
     # Power LED - Indicates Home Station is powered on - Might also indicate system errors??
-Power_LED_Pin_Number = ENTER LED PIN # Enter pin
+Power_LED_Pin_Number = 31 # Enter pin
 GPIO.setup(Power_LED_Pin_Number, GPIO.OUT) # Set pin to output
 Power_LED_STATE = 0
 GPIO.output(Power_LED_Pin_Number, Power_LED_STATE) # Set pin Low
 
 # Button Pin
     # Button Pin - Used to pair the Home Station to the User's WIFI
-WPS_BUTTON_Pin_Number = ENTER LED PIN # Enter pin
-GPIO.setup(WPS_BUTTON_Pin_Number, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+WPS_BUTTON_Pin_Number = 7 # Enter pin
+GPIO.setup(WPS_BUTTON_Pin_Number, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#GPIO.setup(WPS_BUTTON_Pin_Number, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 # Radio
 node_id = 2
 network_id = 100
 recipient_id = 1
 Radio_Power_Level = 90 # Between 0 - 100 (dB)
+HomeRadio = Radio(FREQ_915MHZ, node_id, network_id, isHighPower=True, verbose=False)
 
 # Main
-TimeBetweenSystemCheck = ??? 
+TimeBetweenSystemCheck = 3600
 
 #*******************************************#
 #           Control Panel - End             #
@@ -76,7 +78,7 @@ def SystemStartUp():
     # Enable Power LED
     Power_LED_STATE = 1
     GPIO.output(Power_LED_Pin_Number, Power_LED_STATE)
-    
+    WIFI_LED_STATE = 0
     # check connectivity to user's WIFI - If not connected Blink the WIFI LED & Stay in while loop waiting for WPS to pair
     while(not(CheckWiFiStatus())):
         if(CheckButton()):
@@ -88,26 +90,26 @@ def SystemStartUp():
     # Wifi is connected - LED is set to solid on
     WIFI_LED_STATE = 1
     GPIO.output(WIFI_LED_Pin_Number, WIFI_LED_STATE)
-    
-    # Establish Server/GUI
-    while(SOME_VARIABLE):
-        if(not(SOME_FAULT)):
-            # TO DO - Setup server here
-        else: # Blink Power LED to indicate an Error with Server/GUI setup
-            Power_LED_STATE  = not(Power_LED_STATE) # Toggle state
-            GPIO.output(Power_LED_Pin_Number, Power_LED_STATE) # change state
-            time.sleep(BlinkDelay) # blink LED
-    # Wifi is connected - LED is set to solid on
-    Power_LED_STATE = 1
-    GPIO.output(Power_LED_Pin_Number, Power_LED_STATE)
-    
+
+    # Up to this point tested and working on Home Station
     # Check connectivity to field device - if not connected Blink Radio LED & stay in while loop waiting for connection
-    RadioCalibrate(Radio_Power_Level)
+    # RC Timer Accuracy 4.3.5 pg41
+    # Radio auto calibrated on Power Up
+    # Applications enduring large temperature variations, and for which the power supply is never removed, RC calibration can  be  performed  upon  user  request.
+    # RegOsc1 (0x0A) - RcCalStart, RcCalDone
+    HomeRadio.calibrate_radio()
+    # Set the transmit power level
+    # Value between 0 and 100
+    # RegPaLevel - Outputpower: Output power setting, with 1 dB steps
+    HomeRadio.set_power_level(Radio_Power_Level)
+    Radio_LED_STATE = 0
     while(True):
         # Send a ping to the Field and wait for a response
-        if(Radio_TX()):
+        payload = []
+        HomeRadioStatus = HomeRadio.send(recipient_id, payload, attempts=3, waitTime=100)
+        if(HomeRadioStatus):
             while(True):
-                RadioReturn = Radio_RX():
+                RadioReturn = Radio_RX()
                 if(RadioReturn[0]==4): # 4 = Pair Ping
                     break
                 time.sleep(0.5)
@@ -118,21 +120,43 @@ def SystemStartUp():
     # Radio is connected - LED is set to solid on
     Radio_LED_STATE = 1
     GPIO.output(Radio_LED_Pin_Number, Radio_LED_STATE)
-    
+        
+    # Establish Server/GUI
+    while(SOME_VARIABLE):
+        if(not(SOME_FAULT)):
+            print('filler') # TO DO - Setup server here
+        else: # Blink Power LED to indicate an Error with Server/GUI setup
+            Power_LED_STATE  = not(Power_LED_STATE) # Toggle state
+            GPIO.output(Power_LED_Pin_Number, Power_LED_STATE) # change state
+            time.sleep(BlinkDelay) # blink LED
+    # Wifi is connected - LED is set to solid on
+    Power_LED_STATE = 1
+    GPIO.output(Power_LED_Pin_Number, Power_LED_STATE)
     # Return the time at which the system setup occured
     return time.time()
        
 def CheckButton():
-    if GPIO.input(WPS_BUTTON_Pin_Number) == GPIO.HIGH:
+    if GPIO.input(WPS_BUTTON_Pin_Number) == GPIO.LOW:
         return 1
     return 0
+
+# Function to Recieve Data
+def Radio_RX():
+    # Clear payload
+    payload = []
+    # Add elements based on length of data
+    for i in range(0,len(packet.data)):
+        payload.append(i)
+        payload[i] = packet.data[i]
+    return payload
+
 
 def main():
     # Init system
     TimeOfLastCheck = SystemStartUp()
     # Loop forever
     while(True):
-        # Run Init again after XX time has passed to check for system errors
+        # Run Init again after 3600 seconds time has passed to check for system errors
         if(time.time() - TimeOfLastCheck >= TimeBetweenSystemCheck):
             # Init system
             TimeOfLastCheck = SystemStartUp()
