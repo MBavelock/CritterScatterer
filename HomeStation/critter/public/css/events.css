@@ -1,0 +1,216 @@
+/*--------------------------------*/
+/*         Global Formats         */
+/*--------------------------------*/
+html {
+    font-family: 'Roboto' sans-serif;
+    position: relative;
+    height: 100vh;
+    width: 100%;
+}
+
+body {
+    margin: 0;
+}
+
+h1 {
+    text-align: center;
+    color: #ffffff;
+    font-size: 4em;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 50;
+}
+
+.title-img {
+    height: 300px;
+    max-width: 100%;
+}
+
+.container-img {
+    max-height: 100px;
+    max-width: 100%;
+}
+
+/*-------------------------------*/
+/*  Events Page Content Format  */
+/*-------------------------------*/
+
+/*Events page body format*/
+#events-body {
+    display: flex;
+        flex-direction: row;
+        align-items: center;
+    position: relative;
+    height: 100vh;
+    background-image: var(--backgroundGradient);
+}
+
+#events-container {
+    display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+    margin-left: 20px;
+    position: relative;
+    height: 100vh;
+    width: 100%;
+}
+
+/*--------------------------------*/
+/*          Tab Formats           */
+/*--------------------------------*/
+.tab-container {
+    display: flex;
+        flex-direction: column;
+    position: relative;
+    width: 100%;
+    min-width: 400px;
+    height: 100%;
+    min-height: 400px;
+    padding-bottom: 20px;
+}
+
+/*Main tab formatting*/
+.tab {
+    font-size: 30px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 10px 20px;
+    margin: 0px 2px;
+    background: #000;
+    display: inline-block;
+    color: #fff;
+    border-radius: 3px 3px 0px 0px;
+}
+
+/*Main panel formatting*/
+.panel-container{
+    background: #fffffff6;
+    box-shadow: 0 2px 2px #00000080;
+    height: 100%;
+    border-radius: 3px;
+    overflow: hidden;
+    padding: 20px;
+}
+
+/*Panel contents fade in effect*/
+.panel{
+    display: none;
+    animation: fadein .8s;
+}
+@keyframes fadein {
+    from {
+          opacity:0;
+    }
+    to {
+          opacity:1;
+    }
+}
+
+.radio {
+    display: none;
+}
+
+/*If a tab is checked, switch to that panel*/
+#one:checked ~ .panel-container #one-panel,
+#two:checked ~ .panel-container #two-panel {
+  display: block
+}
+/*Change tab look on check*/
+#one:checked ~ .tabs #one-tab,
+#two:checked ~ .tabs #two-tab,
+#three:checked ~ .tabs #three-tab{
+  background: #fffffff6;
+  color: #000;
+  border-top: 4px solid #528dca;
+}
+
+/*--------------------------------*/
+/*      Data Section Format       */
+/*--------------------------------*/
+
+#data-container {
+    display: flex;
+        flex-flow: column wrap;
+        justify-content: flex-start;
+    position: relative;
+    padding: 141px 20px 20px 20px;
+    width: 100%;
+    min-width: 400px;
+    height: 100%;
+    max-height: 100vh;
+}
+
+/*White panel to contain contents*/
+.data-panel {
+    background: #fffffff6;
+    box-shadow: 0 2px 2px #00000080;
+    border-radius: 3px;
+    padding: 15px;
+    min-height: 340px;
+    height: 100%;
+}
+
+/*Contrainer for each data entry button*/
+.list-container {
+    position: relative;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+}
+/*List container ul settings*/
+.list-container ul {
+    display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-content: center;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+/*List container li settings*/
+.list-container li {
+    cursor: pointer;
+    display: inline-block;
+    font-size: 18px;
+    font-weight: 500;
+    display: block;
+    padding-left: 5px;
+    line-height: 40px;
+}
+/*List container a hover settings*/
+.list-container li:hover {
+    -webkit-transition: all .1s ease-in-out;
+    transition: all .1s ease-in-out;
+    color: #fff;
+    background-color: #669AE1;
+}
+
+/*-------------------------------*/
+/*      Mobile Device Formats    */
+/*-------------------------------*/
+@media only screen and (max-device-width: 480px) {
+    /*If on mobile, change to column layout*/
+    #events-body {
+        flex-direction: column;
+    }
+
+    /*If on mobile, change events container settings*/
+    #events-container {
+        align-items: center;
+        padding: 0 20px 0 20px;
+        margin: 0;
+        height: auto;
+    }
+
+    /*If on mobile, change data container settings*/
+    #data-container {
+        padding: 0 20px 0 20px;
+        margin-bottom: 20px;
+    }
+
+    /*If on mobile, change tab container settings*/
+    .tab-container {
+        height: auto;
+        min-height: auto;
+    }
+}

@@ -1,0 +1,376 @@
+/*--------------------------------*/
+/*       Icon Font Formats        */
+/*--------------------------------*/
+@font-face {
+    font-family: 'icomoon';
+    src:  url('fonts/icomoon.eot?gqtfxp');
+    src:  url('fonts/icomoon.eot?gqtfxp#iefix') format('embedded-opentype'),
+      url('fonts/icomoon.ttf?gqtfxp') format('truetype'),
+      url('fonts/icomoon.woff?gqtfxp') format('woff'),
+      url('fonts/icomoon.svg?gqtfxp#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+  }
+  
+[class^="icon-"], [class*=" icon-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'icomoon' !important;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+  
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-Side-Events-Active:before {
+    content: "\e900";
+    position: relative;
+}
+.icon-Side-Options-Active:before {
+    content: "\e901";
+    position: relative;
+}
+.icon-Sensor-Button:before {
+    content: "\e902";
+}
+.icon-Back-Button:before {
+    content: "\e903";
+    position: relative;
+    font-size: 120px;
+}
+
+/*Import Roboto Font*/
+@import url(https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap);
+
+.icon-2x {
+font-size: 2em;
+}
+
+
+/*--------------------------------*/
+/*       Main Menu Formats        */
+/*--------------------------------*/
+/*Icon Settings*/
+.menu-icon {
+    position: relative;
+    display: table-cell;
+    width: 180px;
+    height: 60px;
+    text-align: left;
+    vertical-align: middle;
+    font-size:14px;
+}
+
+/*Settings for expanded menu on hover*/
+.main-menu:hover, nav.main-menu.expanded {
+    width:250px;
+}
+
+/*Main Menu Container*/
+.main-menu {
+    background: #ffffff;
+    box-shadow: 1px 0 2px black;
+    position: relative;
+    height: 100vh;
+    width: 120px;
+    overflow: hidden;
+    -webkit-transition: width .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+    transition: width .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+    flex-shrink: 0;
+    z-index: 1;
+}
+
+/*Set ul settings for menu*/
+.main-menu ul {
+    display: flex;
+        flex-flow: column nowrap;
+        justify-content: flex-start;
+    position: absolute;
+    height: 100vh;
+}
+
+/*Set li settings for menu*/
+.main-menu li {
+    position: relative;
+    width: 250px;
+}
+
+/*Set menu entries settings*/
+.main-menu li > a {
+    position: relative;
+    display: table;
+    border-collapse: collapse;
+    border-spacing: 0;
+    color: #1f3248;
+    font-family: 'Roboto', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    text-decoration: none;
+    -webkit-transition: all .1s ease-in-out;
+    transition: all .1s ease-in-out; 
+}
+
+/*Set menu text settings*/
+.main-menu .nav-text {
+    position: relative;
+    display: table-cell;
+    vertical-align: middle;
+    width: 190px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.main-menu ul > li.back {
+    margin-top: auto;
+}
+
+a:hover,a:focus {
+    text-decoration: none;
+}
+
+nav {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+/*Settings for nav ul and li*/
+nav ul, nav li {
+    outline: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/*Set menu element hover settings*/
+.main-menu li:hover > a,
+nav.main-menu li.active > a,
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus,
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus,
+.no-touch .dashboard-page nav.dashboard-menu ul li:hover a,
+.dashboard-page nav.dashboard-menu ul li.active a {
+    color: #fff;
+    background-color: #669AE1;
+}
+
+/*--------------------------------*/
+/*       Mobile Menu Formats      */
+/*--------------------------------*/
+.mobile-menu {
+    margin: auto;
+    position: absolute;
+    top: 710px;
+    bottom: 0;
+    left: 0;
+    right: 340px;
+    width: 80px;
+    height: 80px;
+    text-align: center;
+    box-sizing: border-box;
+    font-size: 26px;
+}
+
+a {
+    color: inherit;
+}
+ 
+.menu-item,
+.menu-open-button {
+    background: #EEEEEE;
+    border-radius: 100%;
+    width: 80px;
+    height: 80px;
+    margin-left: -40px;
+    position: absolute;
+    color: #FFFFFF;
+    text-align: center;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    -webkit-transition: -webkit-transform ease-out 200ms;
+    transition: -webkit-transform ease-out 200ms;
+    transition: transform ease-out 200ms;
+    transition: transform ease-out 200ms, -webkit-transform ease-out 200ms;
+    z-index: 20;
+}
+ 
+.menu-open {
+    display: none;
+}
+
+/*Lines formatting for hamburger menu*/
+.lines {
+    width: 25px;
+    height: 3px;
+    background: #596778;
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -12.5px;
+    margin-top: -1.5px;
+    -webkit-transition: -webkit-transform 200ms;
+    transition: -webkit-transform 200ms;
+    transition: transform 200ms;
+    transition: transform 200ms, -webkit-transform 200ms;
+}
+.line-1 {
+    -webkit-transform: translate3d(0, -8px, 0);
+    transform: translate3d(0, -8px, 0);
+}
+.line-2 {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+.line-3 {
+    -webkit-transform: translate3d(0, 8px, 0);
+    transform: translate3d(0, 8px, 0);
+}
+/*Change hamburger to x when menu is clicked*/
+.menu-open:checked + .menu-open-button .line-1 {
+    -webkit-transform: translate3d(0, 0, 0) rotate(45deg);
+    transform: translate3d(0, 0, 0) rotate(45deg);
+}
+.menu-open:checked + .menu-open-button .line-2 {
+    -webkit-transform: translate3d(0, 0, 0) scale(0.1, 1);
+    transform: translate3d(0, 0, 0) scale(0.1, 1);
+}
+.menu-open:checked + .menu-open-button .line-3 {
+    -webkit-transform: translate3d(0, 0, 0) rotate(-45deg);
+    transform: translate3d(0, 0, 0) rotate(-45deg);
+}
+ 
+.menu-item:hover {
+    background: #EEEEEE;
+    color: #3290B1;
+}
+
+/*
+Can change settings dynamically for each menu entry
+through use of children
+*/
+.menu-item:nth-child(3) {
+    -webkit-transition-duration: 180ms;
+    transition-duration: 180ms;
+}
+.menu-item:nth-child(4) {
+    -webkit-transition-duration: 180ms;
+    transition-duration: 180ms;
+}
+.menu-item:nth-child(5) {
+    -webkit-transition-duration: 180ms;
+    transition-duration: 180ms;
+}
+ 
+.menu-open-button {
+    z-index: 21;
+    -webkit-transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    -webkit-transition-duration: 400ms;
+    transition-duration: 400ms;
+    -webkit-transform: scale(1.1, 1.1) translate3d(0, 0, 0);
+    transform: scale(1.1, 1.1) translate3d(0, 0, 0);
+    cursor: pointer;
+    box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.14);
+}
+ 
+.menu-open-button:hover {
+    -webkit-transform: scale(1.2, 1.2) translate3d(0, 0, 0);
+    transform: scale(1.2, 1.2) translate3d(0, 0, 0);
+}
+ 
+.menu-open:checked + .menu-open-button {
+    -webkit-transition-timing-function: linear;
+    transition-timing-function: linear;
+    -webkit-transition-duration: 200ms;
+    transition-duration: 200ms;
+    -webkit-transform: scale(0.8, 0.8) translate3d(0, 0, 0);
+    transform: scale(0.8, 0.8) translate3d(0, 0, 0);
+}
+ 
+.menu-open:checked ~ .menu-item {
+    -webkit-transition-timing-function: cubic-bezier(0.935, 0, 0.34, 1.33);
+    transition-timing-function: cubic-bezier(0.935, 0, 0.34, 1.33);
+}
+
+/*Child positioning for animation*/
+.menu-open:checked ~ .menu-item:nth-child(3) {
+    transition-duration: 380ms;
+    -webkit-transition-duration: 380ms;
+    -webkit-transform: translate3d(0px, -95px, 0);
+    transform: translate3d(0px, -85px, 0);
+}
+.menu-open:checked ~ .menu-item:nth-child(4) {
+    transition-duration: 480ms;
+    -webkit-transition-duration: 480ms;
+    -webkit-transform: translate3d(0px, -200px, 0);
+    transform: translate3d(0px, -190px, 0);
+}
+.menu-open:checked ~ .menu-item:nth-child(5) {
+    transition-duration: 580ms;
+    -webkit-transition-duration: 580ms;
+    -webkit-transform: translate3d(0px, -305px, 0);
+    transform: translate3d(0px, -295px, 0);
+}
+
+/*Menu entry color settings*/
+.blue {
+    background-color: #669AE1;
+    box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.14);
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.12);
+}
+.blue:hover {
+    color: #669AE1;
+    text-shadow: none;
+}
+
+/*-------------------------------*/
+/*      Mobile Device Formats    */
+/*-------------------------------*/
+@media only screen and (max-device-width: 480px) {
+    
+    /*If on mobile, turn on mobile menu*/
+    .mobile-menu {
+        display: block;
+    }
+    .main-menu {
+        display: none;
+    }
+
+    /*If on mobile change size of icons for menu*/
+    .icon-Side-Events-Active:before {
+        content: "\e900";
+        position: absolute;
+        padding: 10px 0 0 30px;
+        font-size: 60px;
+    }
+    .icon-Side-Options-Active:before {
+        content: "\e901";
+        position: absolute;
+        padding: 10px 0 0 30px;
+        font-size: 60px;
+    }
+    .icon-Back-Button:before {
+        content: "\e903";
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 60px;
+    }
+}
+  
+@media only screen and (min-device-width: 481px) {
+    .mobile-menu {
+        display: none;
+    }
+    .main-menu {
+        display: block;
+    }
+}

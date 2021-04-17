@@ -1,0 +1,230 @@
+/*Global CSS variables*/
+:root {
+    --backgroundGradient: linear-gradient(to bottom right ,#2c4664, #2a557b);
+    --blue: #9cc3f7;
+    --black: #000;
+    --white: #ffffff;
+}
+
+/*Universal selector, applies to all page elements*/
+* {
+    color: var(--fontColor);
+    font-family: helvetica;
+    box-sizing: border-box;
+}
+
+/*--------------------------------*/
+/*       Icon Font Formats        */
+/*--------------------------------*/
+@font-face {
+    font-family: 'icomoon';
+    src:  url('fonts/icomoon.eot?gqtfxp');
+    src:  url('fonts/icomoon.eot?gqtfxp#iefix') format('embedded-opentype'),
+      url('fonts/icomoon.ttf?gqtfxp') format('truetype'),
+      url('fonts/icomoon.woff?gqtfxp') format('woff'),
+      url('fonts/icomoon.svg?gqtfxp#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+  
+[class^="icon-"], [class*=" icon-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'icomoon' !important;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+  
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.icon-Side-Events-Active:before {
+    content: "\e900";
+    font-size: 120px;
+    position: absolute;
+    transform: translate(-60px);
+}
+.icon-Side-Options-Active:before {
+    content: "\e901";
+    font-size: 120px;
+    position: absolute;
+    transform: translate(-60px);
+}
+.icon-Sensor-Button:before {
+    content: "\e902";
+    font-size: 120px;
+    position: absolute;
+    transform: translate(-60px);
+}
+
+/*Import font family open sans and roboto*/
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700);
+@import url(https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap);
+
+/*--------------------------------*/
+/*         Global Formats         */
+/*--------------------------------*/
+html {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+}
+
+body {
+    margin: 0;
+}
+
+h1 {
+    text-align: center;
+    color: #ffffff;
+    font-size: 4em;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 50;
+}
+
+.title-img {
+    height: 300px;
+    max-width: 100%;
+}
+
+.container-img {
+    max-height: 100px;
+    max-width: 100%;
+}
+
+/*Set button default border*/
+button {
+    border: 0px;
+}
+button:focus {outline:0;} /*remove outline when clicked*/
+
+/*-------------------------------*/
+/*    Home Page Content Format   */
+/*-------------------------------*/
+
+/*Main page body format*/
+#main-body {
+    font-family: 'OpenSans', sans-serif;
+    font-size: 1rem;
+    line-height: 2;
+    display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    position: relative;
+    height: 100%;
+    background-image: var(--backgroundGradient);
+    border: 3px;
+    box-sizing: border-box;
+}
+
+/*Flex container for home page buttons*/
+.main-buttons {
+    display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+        justify-content: space-evenly;
+    text-align: center;
+    padding:  40px 0px;
+    width: 600px;
+    max-width: 100%;
+}
+
+/*Button selector*/
+.btn {
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: 700;
+    height: 160px;
+    width: 160px;
+    line-height: 250px;
+    position: relative;
+    text-decoration: none;
+    text-transform: uppercase;
+    margin: auto;
+    margin: 5px 5px 5px 5px;
+}
+
+.btn:hover {
+    text-decoration: none;
+}
+
+/*Btn Background*/
+.effect01 {
+    color: #1f3248;
+    background-color: #528dca;
+    box-shadow: 0px 0px 5px .2px #000;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s ease-in-out;
+}
+
+/*Btn Text Spacing Change*/
+.effect01 span {
+    transition: all 0.2s ease-out;
+    z-index: 2;
+}
+.effect01:hover span{
+    letter-spacing: 0.15em;
+}
+
+/*Light Reflection Animation*/
+.effect01:after {
+    background: #FFF;
+    content: "";
+    height: 280px;
+    left: -180px;
+    opacity: .2;
+    position: absolute;
+    top: -80px; /*Starts at -80px and goes to -100px*/
+    -webkit-transform: rotate(35deg);
+            transform: rotate(35deg);
+    width: 180px;
+    transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+    z-index: 1;
+}
+.effect01:hover:after {
+    background: #FFF;
+    opacity: .2;
+    left: -100px;
+
+}
+
+/*-------------------------------*/
+/*   Page Fader Content Format   */
+/*-------------------------------*/
+
+/*Fader selector options*/
+#fader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999999;
+    pointer-events: none;
+    background: var(--backgroundGradient);
+    animation-duration: 300ms;
+    animation-timing-function: ease-in-out;
+}
+/*Fader animations*/
+@keyframes fade-out {
+    from { opacity: 1 }
+      to { opacity: 0 }
+}
+@keyframes fade-in {
+    from { opacity: 0 }
+      to { opacity: 1 }
+}
+#fader.fade-out {
+    opacity: 0;
+    animation-name: fade-out;
+}
+#fader.fade-in {
+    opacity: 1;
+    animation-name: fade-in;
+}
