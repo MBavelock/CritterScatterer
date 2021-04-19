@@ -56,9 +56,9 @@ GPIO.setup(WPS_BUTTON_Pin_Number, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 #GPIO.setup(WPS_BUTTON_Pin_Number, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 # Radio
-node_id = 2
+node_id = 1
 network_id = 100
-recipient_id = 1
+recipient_id = 2
 Radio_Power_Level = 90 # Between 0 - 100 (dB)
 HomeRadio = Radio(FREQ_915MHZ, node_id, network_id, isHighPower=True, verbose=False)
 
@@ -103,26 +103,33 @@ def SystemStartUp():
     # RegPaLevel - Outputpower: Output power setting, with 1 dB steps
     HomeRadio.set_power_level(Radio_Power_Level)
     Radio_LED_STATE = 0
-    while(True):
+    delay = 0.5
+    delaycount = 0
+    HomeToField = False
+    FieldToHome = False
+    while(not(HomeToField and FieldToHome)):
         # Send a ping to the Field and wait for a response
-        payload = []
-        HomeRadioStatus = HomeRadio.send(recipient_id, payload, attempts=3, waitTime=100)
-        if(HomeRadioStatus):
-            while(True):
-                RadioReturn = Radio_RX()
-                if(RadioReturn[0]==4): # 4 = Pair Ping
-                    break
-                time.sleep(0.5)
-        else:
-            Radio_LED_STATE  = not(Radio_LED_STATE) # Toggle state
-            GPIO.output(Radio_LED_Pin_Number, Radio_LED_STATE) # change state
-            time.sleep(BlinkDelay) # blink LED
+        if((delaycount % 5)==0):
+            HomeRadioStatus = HomeRadio.send(recipient_id, "Hello", attempts=3, waitTime=100)
+            HomeToField = True
+        if (HomeRadioStatus):
+            RadioReturn = HomeRadio.get_packets()
+            for packet in RadioReturn:
+                if (packet.data == [52]):
+                    HomeRadioStatus = HomeRadio.send(recipient_id, "4", attempts=10, waitTime=100)
+                    FieldToHome = True
+        time.sleep(delay)
+        delaycount += delay
+        Radio_LED_STATE  = not(Radio_LED_STATE) # Toggle state
+        GPIO.output(Radio_LED_Pin_Number, Radio_LED_STATE) # change state
+        #time.sleep(BlinkDelay) # blink LED
     # Radio is connected - LED is set to solid on
+    print('Done...')
     Radio_LED_STATE = 1
     GPIO.output(Radio_LED_Pin_Number, Radio_LED_STATE)
         
     # Establish Server/GUI
-    while(SOME_VARIABLE):
+    '''while(SOME_VARIABLE):
         if(not(SOME_FAULT)):
             print('filler') # TO DO - Setup server here
         else: # Blink Power LED to indicate an Error with Server/GUI setup
@@ -133,6 +140,7 @@ def SystemStartUp():
     Power_LED_STATE = 1
     GPIO.output(Power_LED_Pin_Number, Power_LED_STATE)
     # Return the time at which the system setup occured
+    '''
     return time.time()
        
 def CheckButton():
@@ -143,12 +151,12 @@ def CheckButton():
 # Function to Recieve Data
 def Radio_RX():
     # Clear payload
-    payload = []
+    RXpayload = []
     # Add elements based on length of data
     for i in range(0,len(packet.data)):
-        payload.append(i)
-        payload[i] = packet.data[i]
-    return payload
+        RXpayload.append(i)
+        RXpayload[i] = packet.data[i]
+    return RXpayload
 
 
 def main():
