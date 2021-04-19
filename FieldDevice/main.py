@@ -1,220 +1,275 @@
-# Pi Camera Imports
+#*******************************************#
+#           Library Imports - Start         #
+#*******************************************#
+# General Libraries
+import time
+
+# Pi Camera
 from picamera.array import PiRGBArray
 from picamera import PiCamera
-# GPIO Imports
+
+# GPIO
 import RPi.GPIO as GPIO
-# Open CV
-import cv2
-# Other Imports
-import time
+
+# Radio RFM69
+from RFM69 import Radio, FREQ_915MHZ
+
+# Tensorflowlite
 import os
 import numpy as np
-from PIL import Image
-# Tensor Flow Lite Imports
-#from tflite_runtime.interpreter import load_delegate
-#from tflite_runtime.interpreter import Interpreter
+import cv2
+from tflite_runtime.interpreter import Interpreter
+from tflite_runtime.interpreter import load_delegate
 
-#*****Control Panel*****#
-# Delay between PIR hits
-DelayBetweenPIR = 2
+# Audio
+import pygame
 
-# Number of pictures the camera takes and inferences before a determination is made on whether or not a animals is there
-NumberOfImagesPerPIRHit = 2
+#*******************************************#
+#           Library Imports - End           #
+#*******************************************#
 
-# Decide if Using Code to debug or real 
-Debug = True
-
-# threshold
-#threshold = 0.01
-
-# Color of text or bounding boxes
-#color = (0,0,255)
-
+#*******************************************#
+#           Control Panel - Start           #
+#*******************************************#
+# Camera
 # initialize the camera
 camera = PiCamera()
 # Default image size captured from camera
-ImageSize = (640,480)
+ImageSize = (1080,720)
 
-# initialize GPIO
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(23,GPIO.IN) #Define pin 18 as an input pin
-PIR18 = GPIO.input(23)
+# Object Detection
+GRAPH_NAME = "4_10b_output_tflite_graph_edgetpu.tflite"
+LABELMAP_NAME = "label_map.txt"
+min_conf_threshold = float(0.5)
 
-# Take image periodically or bases on PIR hit
-TimeLapse = False
+    # Load the label map
+with open(LABELMAP_NAME, 'r') as f:
+    labels = [line.strip() for line in f.readlines()]
 
-# Load Model
-#TFLModel = "AnimalModel_v1.0_10000.tflite"
-#TFLModel = "AnimalModel_v1.0_100000.tflite"
-#TFLLabel = "AnimalModel_v1.0_labels.txt"
+    # Load the Tensorflow Lite model.
+interpreter = Interpreter(model_path=GRAPH_NAME,
+                          experimental_delegates=[load_delegate('libedgetpu.so.1.0')])
 
-# Initalize model
-#interpreter = Interpreter(TFLModel,experimental_delegates=[load_delegate('libedgetpu.so.1')])
-#interpreter.allocate_tensors()
-# Get output for debugging
-#input_details = interpreter.get_input_details()
+interpreter.allocate_tensors()
+
+    # Get model details
+input_details = interpreter.get_input_details()
 #output_details = interpreter.get_output_details()
-#print(input_details)
-#print(output_details)
-#
-#***********************#
+height = 300
+width = 300
+input_mean = 127.5
+input_std = 127.5
 
+# Radio
+node_id = 2
+network_id = 100
+recipient_id = 1
+Radio_Power_Level = 90 # Between 0 - 100 (dB)
+#print('Debug: Making Radio object...')
+FieldRadio = Radio(FREQ_915MHZ, node_id, network_id, isHighPower=True, verbose=False)
+#print('Debug: Radio Object Made')
+
+# Relay Pins
+GPIO.setmode(GPIO.BOARD)
+GPIO.setwarnings(False)
+    # Water pump
+WATER_PUMP_PIN = 33 # Enter pin
+GPIO.setup(WATER_PUMP_PIN, GPIO.OUT) # Set pin to output 
+WATER_PUMP_PIN_STATE = 1
+GPIO.output(WATER_PUMP_PIN, WATER_PUMP_PIN_STATE) # Set pin High
+    # Flood Light
+FLOOD_LIGHT_PIN = 31 # Enter pin
+GPIO.setup(FLOOD_LIGHT_PIN, GPIO.OUT) # Set pin to output 
+FLOOD_LIGHT_PIN_STATE = 1
+GPIO.output(FLOOD_LIGHT_PIN, FLOOD_LIGHT_PIN_STATE) # Set pin High
+    # IR Light
+IR_LIGHT_PIN = 35 # Enter pin
+GPIO.setup(IR_LIGHT_PIN, GPIO.OUT) # Set pin to output 
+IR_LIGHT_PIN_STATE = 1
+GPIO.output(IR_LIGHT_PIN, IR_LIGHT_PIN_STATE) # Set pin High
+
+# Water Sensors
+    # 50% Float Switch
+HALF_FLOAT = 36 # Enter pin
+GPIO.setup(HALF_FLOAT, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    # 0% Float Switch
+EMPTY_FLOAT = 32 # Enter pin
+GPIO.setup(EMPTY_FLOAT, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+# Audio
+pygame.mixer.init()
+AudioFileDir = "/AudioFiles/"
+
+
+# Errors
+RadioError = False
+RelayError = False
+CameraError = False
+ClassifierError = False
+FloatError = False
+AudioError = False
+
+#*******************************************#
+#           Control Panel - End             #
+#*******************************************#
+
+
+#*******************************************#
+#                   Begin                   #
+#*******************************************#
+# Take Image from camera
 def TakeImage():
     # grab a reference to the raw camera capture
     rawCapture = PiRGBArray(camera)
-    
     # allow the camera to warmup
     time.sleep(0.1)
-    
     # grab an image from the camera
     camera.resolution = ImageSize
     camera.capture(rawCapture, format="bgr")
     image = rawCapture.array
-    
-    # Verticle flip
+    # Verticle flip - MAYBE?
     image = cv2.flip(image, 0)
-    
-    # display the image on screen and wait for a keypress
-    #cv2.imshow("Image", image)
-    #cv2.waitKey(0)
-    #image = cv2.resize(image,(720, 480))
     return image
 
-def RunOnCamera():
-    # Take Image
-    ImageToScan = TakeImage()
-    
-    # Run TFLite Image Classification
-    labels = load_labels(TFLLabel)
-    #print(labels)
-    
-    results = RunInference(ImageToScan)
-    print(results)
-    
-    # ScannedImage WILL BE THE IMAGE WIH BOUNDING BOX
-    ScannedImage = ImageToScan
-    filler = ['Human', 'Dog']
-    # determine 
-    return filler, ScannedImage
+def SystemStartUp():
+    # Radio
+    try:
+        FieldRadio.calibrate_radio()
+        FieldRadio.set_power_level(Radio_Power_Level)
+        FieldToHome = True #False
+        HomeToField = True #False
+        delay = 0.5
+        delaycount = 0
+        TXP = [52]
+        while(not(FieldToHome and HomeToField)):
+            # Send a ping to the Homestation and wait for a response
+            if ((delaycount % 5) == 0):
+                #print('Debug: Field Waiting For Home To Ack...')
+                FieldRadioStatus = FieldRadio.send(recipient_id, TXP, attempts=5, waitTime=100)
+                FieldToHome = True
+            if (FieldRadioStatus):
+                #print('Debug: Wating for Home to send...')
+                RadioReturn = FieldRadio.get_packets()
+                for packet in RadioReturn:
+                    #print('Debug: RX: ',packet)
+                    if(packet.data == [52]):
+                        HomeToField = True
+            time.sleep(delay)
+            delaycount += delay
+    except:
+        RadioError = True
+        print('Debug: Radio Error -', RadioError)
 
-def RunInference(Image):
-    # Will run inference on images
-    # Of course NOT DONE 3/9/21
-    filler = Image
-    return filler
+    # Relays
+    try:
+        #print('Debug: Testing Relays...')
+        time.sleep(1)
+        # Water Pump
+        WATER_PUMP_PIN_STATE = 0
+        GPIO.output(WATER_PUMP_PIN, WATER_PUMP_PIN_STATE)
+        time.sleep(2)
+        WATER_PUMP_PIN_STATE = 1
+        GPIO.output(WATER_PUMP_PIN, WATER_PUMP_PIN_STATE)
+        time.sleep(1)
+        # Flood Light
+        FLOOD_LIGHT_PIN_STATE = 0
+        GPIO.output(FLOOD_LIGHT_PIN, FLOOD_LIGHT_PIN_STATE)
+        time.sleep(2)
+        FLOOD_LIGHT_PIN_STATE = 1
+        GPIO.output(FLOOD_LIGHT_PIN, FLOOD_LIGHT_PIN_STATE)
+        time.sleep(1)
+        # IR Light
+        IR_LIGHT_PIN_STATE = 0
+        GPIO.output(IR_LIGHT_PIN, IR_LIGHT_PIN_STATE)
+        time.sleep(2)
+        IR_LIGHT_PIN_STATE = 1
+        GPIO.output(IR_LIGHT_PIN, IR_LIGHT_PIN_STATE)
+        time.sleep(1)
+    except:
+        RelayError = True
+        print('Debug: Relay Error -', RelayError)
 
+    # Camera
+    try:
+        Image = TakeImage()
+    except:
+        CameraError = True
+        print('Debug: Camera Error -', CameraError)
+
+    # Classifier
+    try:
+        ClassifierHits = RunInference(Image)
+        print(ClassifierHits)
+    except:
+        ClassifierError = True
+        print('Debug: Classifier Error -', ClassifierError)
+
+    # Audio
+#    try:
+    LastAudio = AudioDeterrent("AudioFiles/BaldEagle00.mp3",0.5)
+    #pygame.mixer.music.load("example.mp3") #Loading audio file to be played
+    #pygame.mixer.music.set_volume(0.5) #Setting volume, range between 0.0 - 1.0
+    #pygame.mixer.music.play()
+    #return time.time()
+
+#    except:
+#        AudioError = True
+#        print('Debug: Audio Error -', AudioError)
+
+
+    # Floats
+    try:
+        WaterLevel = CheckWaterLevel()
+        print(WaterLevel)
+    except:
+        FloatError = True
+        print('Debug: Float Error -', FloatError)
+    # Return the time at which the system setup occured
+    return time.time()
+
+def RunInference(frame):
+    #frame = cv2.imread(directory + filename)
+    imH, imW, c = frame.shape
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    frame_resized = cv2.resize(frame_rgb, (width, height))
+    input_data = np.expand_dims(frame_resized, axis=0)
+    # Perform the actual detection by running the model with the image as input
+    interpreter.set_tensor(input_details[0]['index'],input_data)
+    interpreter.invoke()
+    output_details = interpreter.get_output_details()
+    # Retrieve detection results 
+    boxes = interpreter.get_tensor(output_details[0]['index'])[0] # Bounding box coordinates of detected objects
+    classes = interpreter.get_tensor(output_details[1]['index'])[0] # Class index of detected objects
+    scores = interpreter.get_tensor(output_details[2]['index'])[0] # Confidence of detected objects
+    return classes
+
+def AudioDeterrent(File_Selector, Volume_Lvl):
+    pygame.mixer.music.load(File_Selector) #Loading audio file to be played
+    pygame.mixer.music.set_volume(Volume_Lvl) #Setting volume, range between 0.0 - 1.0
+    pygame.mixer.music.play() 
+    while pygame.mixer.music.get_busy() == True:
+        continue
+    pygame.mixer.music.unload()
+    return time.time()
+
+def VisualDeterrent():
+    return time.time()
+
+def WaterDeterrent():
+    return time.time()
+
+def CheckWaterLevel():
+    if (GPIO.input(HALF_FLOAT) == GPIO.LOW):
+        return 2
+    if (GPIO.input(EMPTY_FLOAT) == GPIO.LOW):
+        return 1
+    return 0
+
+##############################################################
 def main():
-    # Init Stuff - Loop on failed?
-    # Check connection with home (radio)
-    # Check (maybe) power
-    # Check camera status
-    # load model and perform inital inference
-    # Check (maybe) deterrents
-    if Debug:
-        count = 0
-        if TimeLapse:
-            maxcount = 100000
-        else:
-            maxcount = 100
-        while(count <= maxcount):
-            if PIR18:
-                # Print for debug
-                print(count)
-                
-                # Start timer for debug
-                StartTime = time.time()
-                
-                # Take image at PIR hit 
-                ImageToScan = TakeImage()
-                
-                # Save images with count number
-                outfile = './PIR_HIT_%s.jpg' % str(count)
-                cv2.imwrite(outfile, ImageToScan)
-                
-                # Print for debug - time taken
-                print("Time from detection to classification: ",time.time() - StartTime)
-                count = count + 1
-                
-            # Delay for amount of time between PIR hits
-            time.sleep(DelayBetweenPIR)
+    LastSystemStartUp = SystemStartUp()
+    print('System Ready')
 
-  else:
-        # First time variables
-        Reassess = False
-        DogsAllowed = False
-        CatsAllowed = False
-        LowLight = False
-        RadioTime = time.time()
-        while True:
-            # Assign Threats list - May change based on user input (Default = False)
-            Threats = ['nothing','Dog','Cat','3','4','5','6','7','8','9','10','11']
-            if DogsAllowed:
-                Threats.remove('Dog')
-            if CatsAllowed:
-                Threats.remove('Cat')    
-            # Ensure IR Flood Light is off to save power
-            #Disable IR FLOOD LIGHT
-            # Poll PIR pin
-            PIR18 = GPIO.input(23)
-            # When PIR detects record time and run classification
-            if PIR18 or Reassess:
-                LOG_PIRHit = time.time()
-                PositiveClassification = []
-                ThreatDetected = False
-                for i in range(NumberOfImagesPerPIRHit):
-                    if LowLight:
-                        #Activate IR Flood Light
-                    Labels, Images = RunOnCamera()
-                    AllClassifications.append(Labels)
-                    AllImages.append(Images)
-                    # Check Labels against list of threats - May need a better system of determining a threat = true
-                    # Right now its any true beats all falses - MAY want to average (3/9/21)
-                    for Label in Labels:
-                        for Threat in Threats:
-                            if Label == Threat:
-                                ThreatDetected = True
-                                LOG_ClassifiedEvent = time.time()
-                
-                # If the found object is a known threat activate deterrents
-                if ThreatDetected:
-                    # Deterrents to use and when TBD
-                    if LowLight:
-                        # RUN deterrent (Light?)
-                        LOG_DeterrentX = time.time()
-                    else:
-                        # RUN Deterrent (Audio?)
-                        LOG_DeterrentY = time.time()
-                    # RUN Deterrent (Water?)
-                    LOG_DeterrentZ = time.time()
-                    
-                    # Recheck area    
-                    Reassess = True
-                    EventEnd = 0
-                else:
-                    Reassess = False
-                    EventEnd = time.time()
-                
-                # Add Variables to LOG
-                LOG = open("FieldDevice_EventLog.txt", "a")
-                if not(EventEnd):
-                    LOG.write("\nNew Event:"
-                LOG.write("\n" LOG_PIRHit)
-                LOG.write("\n" LOG_ClassifiedEvent)
-                LOG.write("\n" LOG_DeterrentX)
-                LOG.write("\n" LOG_DeterrentY)
-                LOG.write("\n" LOG_DeterrentZ)
-                if EventEnd:
-                    LOG.write("\n" EventEnd)
-                LOG.close() 
-                
-            if RadioTime-time.time() >= 360: # Check if time since last radio communication >= 5 minutes
-                # Radio communication here
-                # Time Check
-                # Send new events
-                # Receive Settings 
-                RadioTime = time.time()
-            # Spin
-                 
-if __name__ == __main__:
-  main()
+
+if __name__ == '__main__':
+    main()
