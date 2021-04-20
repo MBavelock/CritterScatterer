@@ -100,6 +100,10 @@ GPIO.setup(EMPTY_FLOAT, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 pygame.mixer.init()
 AudioFileDir = "/AudioFiles/"
 
+# PIR Sensor
+    # Motion Detection
+PIR_PIN = 21 # Enter pin
+GPIO.setup(PIR_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 # Errors
 RadioError = False
@@ -205,18 +209,12 @@ def SystemStartUp():
         print('Debug: Classifier Error -', ClassifierError)
 
     # Audio
-#    try:
-    LastAudio = AudioDeterrent("AudioFiles/BaldEagle00.mp3",0.5)
-    #pygame.mixer.music.load("example.mp3") #Loading audio file to be played
-    #pygame.mixer.music.set_volume(0.5) #Setting volume, range between 0.0 - 1.0
-    #pygame.mixer.music.play()
-    #return time.time()
-
-#    except:
-#        AudioError = True
-#        print('Debug: Audio Error -', AudioError)
-
-
+    try:
+        LastAudio = AudioDeterrent("AudioFiles/BaldEagle00.mp3",0.5)
+    except:
+        AudioError = True
+        print('Debug: Audio Error -', AudioError)
+                                   
     # Floats
     try:
         WaterLevel = CheckWaterLevel()
@@ -252,10 +250,20 @@ def AudioDeterrent(File_Selector, Volume_Lvl):
     pygame.mixer.music.unload()
     return time.time()
 
-def VisualDeterrent():
+def VisualDeterrent(UseTime):
+    WATER_PUMP_PIN_STATE = 1
+    GPIO.output(WATER_PUMP_PIN, WATER_PUMP_PIN_STATE)
+	time.sleep(UseTime)
+	WATER_PUMP_PIN_STATE = 0
+    GPIO.output(WATER_PUMP_PIN, WATER_PUMP_PIN_STATE)
     return time.time()
 
-def WaterDeterrent():
+def WaterDeterrent(UseTime):
+    FLOOD_LIGHT_PIN_STATE = 1
+    GPIO.output(FLOOD_LIGHT_PIN, FLOOD_LIGHT_PIN_STATE))
+	time.sleep(UseTime)
+    FLOOD_LIGHT_PIN_STATE = 0
+    GPIO.output(FLOOD_LIGHT_PIN, FLOOD_LIGHT_PIN_STATE))
     return time.time()
 
 def CheckWaterLevel():
@@ -264,6 +272,12 @@ def CheckWaterLevel():
     if (GPIO.input(EMPTY_FLOAT) == GPIO.LOW):
         return 1
     return 0
+
+def CheckPIR():
+    if (GPIO.input(PIR_PIN) == GPIO.HIGH):
+        return time.time()
+	return 0
+
 
 ##############################################################
 def main():
