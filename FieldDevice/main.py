@@ -90,10 +90,10 @@ GPIO.output(IR_LIGHT_PIN, IR_LIGHT_PIN_STATE) # Set pin High
 
 # Water Sensors
     # 50% Float Switch
-HALF_FLOAT = 36 # Enter pin
+HALF_FLOAT = 32 # Enter pin
 GPIO.setup(HALF_FLOAT, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     # 0% Float Switch
-EMPTY_FLOAT = 32 # Enter pin
+EMPTY_FLOAT = 36 # Enter pin
 GPIO.setup(EMPTY_FLOAT, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 # Audio
