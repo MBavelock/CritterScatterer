@@ -10,8 +10,9 @@
     <link rel="stylesheet" href="/css/events.css">
 </head>
 <body id="events-body">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script type="text/JavaScript" src="/js/front.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
     <noscript>You need to enable JavaScript to view the full content.</noscript>
     <svg id="fader"></svg>
     <script>
@@ -85,24 +86,17 @@
             <div class="panel-container">
                 <div class="panel" id="one-panel">
                     <div class="list-container">
-                        <ul>
-                            <li>
-                                Item 1
-                            </li>
-                            <li>
-                                Item 2
-                            </li>
-                            <li>
-                                Item 3
-                            </li>
+                        <ul id="today-logs">
+                            <p>No data yet!</p>
                         </ul>
                     </div>
                 </div>
 
                 <div class="panel" id="two-panel">
-                    <p>
-                        Panel contents 2
-                    </p>
+                    <div class="list-container">
+                        <ul id="older-logs">
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -110,8 +104,33 @@
 
     <!--Info display container-->
     <div id="data-container">
-            <div class="data-panel">test content, test content, test content, test content, test content, 
-                                    test content, test content, test content, test content,
+            <div class="data-panel">
+                <ul id="data">
+                    <div>
+                        <li>Date</li>
+                        <!--Used to hold text info-->
+                        <p id="Date"></p>
+                    </div>
+                    <span></span>
+                    
+                    <div>
+                        <li>Time</li>
+                        <p id="Time"></p>
+                    </div>
+                    <span></span>
+
+                    <div>
+                        <li>Animal</li>
+                        <p id="Animal"></p>
+                    </div>
+                    <span></span>
+
+                    <div>
+                        <li>Deterrent</li>
+                        <p id="Deterrent"></p>
+                    </div>
+                    <span></span>
+                </ul> 
             </div>
     </div>
 </body>

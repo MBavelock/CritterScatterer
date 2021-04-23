@@ -9,7 +9,8 @@
 /*Universal selector, applies to all page elements*/
 * {
     color: var(--fontColor);
-    font-family: helvetica;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
     box-sizing: border-box;
 }
 
