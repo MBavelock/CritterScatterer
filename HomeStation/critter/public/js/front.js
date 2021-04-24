@@ -51,7 +51,7 @@ window.addEventListener('pageshow', function (event) {
 /*    Log directory loop settings    */
 /*===================================*/
 let fileNames = []
-let dirPath = '/critter/logs'
+let dirPath = '/home/pi/critter/logs'
 var arr = {}
 
 //Formats for current date
