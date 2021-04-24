@@ -44,7 +44,7 @@ app.get('/events.html', (req, res) => {
 /*--------------------------------------*/
 /*        Info for database files       */
 /*--------------------------------------*/
-let dirPath = '/critter/logs/'
+let dirPath = '/home/pi/critter/logs/'
 
 app.get(dirPath, function(req, res){
   let fileNames = fs.readdirSync(dirPath)
@@ -73,6 +73,6 @@ app.get(dirPath, function(req, res){
 })
 
 //Listen on port 8080
-server.listen(port, () => {
+server.listen(port, '192.168.1.89', () => {
   console.log('Server listening on Port 8080');
 })
