@@ -4,13 +4,12 @@ import urllib
 import re
 import subprocess
 import time
-# NEED TO STANDARDIZE GPIO FOR PROJECT TODO
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
 
 
-def CheckWiFiStatus(): # NOT TESTED
+def CheckWiFiStatus(): # tested - 2nd method works best
   ''' 
   Function will check if currenty connected to an internet network. If connected return 1 else return 0  
             two ways to do this
@@ -18,11 +17,11 @@ def CheckWiFiStatus(): # NOT TESTED
   2nd - run subprocess to check if the Pi as an IP address
   '''
   # 1st
-  try:
-    urllib.request.urlopen("http://google.com") # URL is closed as soon as the connection is reached
-  except:
-    return 0 # Connection failed
-  return 1 # Connection successfull
+  #try:
+  #  urllib.request.urlopen("http://google.com") # URL is closed as soon as the connection is reached
+  #except:
+  #  return 0 # Connection failed
+  #return 1 # Connection successfull
 
   # 2nd - Source (https://www.raspberrypi.org/forums/viewtopic.php?t=77277)
   ret = subprocess.check_output(["ifconfig", "wlan0"]).decode("utf-8")
@@ -44,7 +43,7 @@ def ConnectWifi_WPS(): # NOT TESTED
   # no IP address, so start looking for WPS-PBC network
   # scan networks on interface wlan0, to see some nice networks
   subprocess.check_output(["wpa_cli", "-i", "wlan0", "scan"])
-  time.sleep(1);
+  time.sleep(1)
   # get and decode results
   wpa = subprocess.check_output(["wpa_cli", "-i", "wlan0", "scan_results"]).decode("UTF-8")
   # parse response to get MAC address of router that has WPS-PBC state
@@ -54,27 +53,3 @@ def ConnectWifi_WPS(): # NOT TESTED
     if active_spot_reg.group(1):
       #connect via wps_pbc
       subprocess.check_output(["wpa_cli", "-i", "wlan0", "wps_pbc", active_spot_reg.group(1)])
-      # some debug
-      #print(active_spot_reg.group(1))
-      #print(wpa)
-  # sleep to scan again
-  #time.sleep(30)
-  #IPStatus = CheckWiFiStatus()
-
-# Example usage
-def main(): # NOT TESTED
-  #channel = ##
-  GPIO.setup(channel, GPIO.OUT) # NEED LED PIN (channel)
-  GPIO.output(channel, 0)
-  ButtonPressed = True 
-  while True:
-    IPStatus = CheckWiFiStatus
-    if not(IPStatus):
-      if ButtonPressed:
-        ConnectWiFi_WPS()
-        GPIO.output(channel, 0) # Turn off LED to indicate connection status
-    else:
-      GPIO.output(channel, 1) # Turn on LED to indicate connection status
-
-if __name__ == '__main__':
-    main()
