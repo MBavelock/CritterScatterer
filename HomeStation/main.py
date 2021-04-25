@@ -2,19 +2,21 @@
 #           Library Imports - Start         #
 #*******************************************#
 # General Libraries
-import time
-
-# GPIO
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
-
-# Radio
+import subprocess
+import time
+import urllib.request
 from RFM69 import Radio, FREQ_915MHZ
 
 # WPS Libraries
 from WPS import CheckWiFiStatus
 from WPS import ConnectWifi_WPS
+
+# Radio Libraries
+#from RadioRx import Radio_RX
+#from RadioTx import Radio_TX, RadioCalibrate
 
 # Server Libraries
 
@@ -35,6 +37,7 @@ WIFI_LED_Pin_Number = 35 # Enter pin
 GPIO.setup(WIFI_LED_Pin_Number, GPIO.OUT) # Set pin to output 
 WIFI_LED_STATE = 0
 GPIO.output(WIFI_LED_Pin_Number, WIFI_LED_STATE) # Set pin Low
+
 
     # Radio LED - Indicates connection status to Field Device
 Radio_LED_Pin_Number = 33 # Enter pin
@@ -89,7 +92,26 @@ def SystemStartUp():
     # Wifi is connected - LED is set to solid on
     WIFI_LED_STATE = 1
     GPIO.output(WIFI_LED_Pin_Number, WIFI_LED_STATE)
+
+    # Establish Server/GUI
+    NoServer = True
+    while(True):
+        NoServer = PingServer()
+        if(NoServer):
+            print('GUI Established') # TO DO - Setup server here
+            break
+        else: # Blink Power LED to indicate an Error with Server/GUI setup
+            Power_LED_STATE  = not(Power_LED_STATE) # Toggle state
+            GPIO.output(Power_LED_Pin_Number, Power_LED_STATE) # change state
+            time.sleep(BlinkDelay) # blink LED
+            # Start Server
+            subprocess.call(["sudo", "npm", "start", "&"],cwd="/home/pi/critter/")
+    # Wifi is connected - LED is set to solid on
+    Power_LED_STATE = 1
+    GPIO.output(Power_LED_Pin_Number, Power_LED_STATE)
+    # Return the time at which the system setup occured
     
+    # Up to this point tested and working on Home Station
     # Check connectivity to field device - if not connected Blink Radio LED & stay in while loop waiting for connection
     # RC Timer Accuracy 4.3.5 pg41
     # Radio auto calibrated on Power Up
@@ -125,29 +147,34 @@ def SystemStartUp():
     print('Done...')
     Radio_LED_STATE = 1
     GPIO.output(Radio_LED_Pin_Number, Radio_LED_STATE)
-        
-        
-
-    ########################## Up to this point tested and working on Home Station
-    # Establish Server/GUI
-    '''while(SOME_VARIABLE):
-        if(not(SOME_FAULT)):
-            print('filler') # TO DO - Setup server here
-        else: # Blink Power LED to indicate an Error with Server/GUI setup
-            Power_LED_STATE  = not(Power_LED_STATE) # Toggle state
-            GPIO.output(Power_LED_Pin_Number, Power_LED_STATE) # change state
-            time.sleep(BlinkDelay) # blink LED
-    # Wifi is connected - LED is set to solid on
-    Power_LED_STATE = 1
-    GPIO.output(Power_LED_Pin_Number, Power_LED_STATE)
-    # Return the time at which the system setup occured
-    '''
+    
+    
     return time.time()
        
 def CheckButton():
     if GPIO.input(WPS_BUTTON_Pin_Number) == GPIO.LOW:
         return 1
     return 0
+
+def PingServer():
+    try:
+        status_code = urllib.request.urlopen("http://192.168.1.241:8080").getcode()
+        if status_code == 200:
+            return True
+    except:
+        return False
+    return False
+
+# Function to Recieve Data
+def Radio_RX():
+    # Clear payload
+    RXpayload = []
+    # Add elements based on length of data
+    for i in range(0,len(packet.data)):
+        RXpayload.append(i)
+        RXpayload[i] = packet.data[i]
+    return RXpayload
+
 
 def main():
     # Init system
@@ -159,30 +186,7 @@ def main():
             # Init system
             TimeOfLastCheck = SystemStartUp()
         
-        ########### Not Tested starting here
-        # Wait until Field sends info 
-        RadioReturn = HomeRadio.get_packets()
-            for packet in RadioReturn:
-                if (packet.data[0] == [51]): #3 = event data
-                    # Parse event data into some form
-                    # 24 hrs 60 minutes 60 seconds
-                    # Hours: [1]
-                    # 00011000 - 00000000
-                    # Minutes: [2]
-                    # 00111100 - 00000000
-                    # Seconds: [3]
-                    # 00111100 - 00000000
-                    # [0] header
-                    
-                
-                if (packet.data[0] == [50]): #2 = event alert
-                    # Notify the GUI for an alert to the user
-                    
-                if (packet.data[0] == [49]): #1 = sensor data
-                    # parse sensor data into some form
-                    # water level
-                    # system error
-                    
+        # Wait until Field sends info
         # Parse packets into text file/images maybe
         
         # 
