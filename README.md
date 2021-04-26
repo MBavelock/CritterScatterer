@@ -1,4 +1,4 @@
-<img src="https://github.com/MBavelock/CritterScatterer/blob/master/HomeStation/critter/public/images/Critter_Scatterer.svg" alt="Title" width="100" height="100">
+<img src="https://github.com/MBavelock/CritterScatterer/blob/master/HomeStation/critter/public/images/Critter_Scatterer.svg" alt="Title" width="500" height="500" align="center">
 
 
 
