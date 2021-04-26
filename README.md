@@ -1,4 +1,4 @@
-# CritterScatterer
+![plot](.HomeStation/critter/public/images/Critter_Scatterer.svg)
 
 
 
