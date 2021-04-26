@@ -1,4 +1,4 @@
-![plot](https://github.com/MBavelock/CritterScatterer/blob/master/HomeStation/critter/public/images/Critter_Scatterer.svg)
+<img src="https://github.com/MBavelock/CritterScatterer/blob/master/HomeStation/critter/public/images/Critter_Scatterer.svg" alt="Title" width="100" height="100">
 
 
 
